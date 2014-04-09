@@ -1,0 +1,14 @@
+<!doctype html>
+<title>Hello from Flask</title>
+{% if data.result %}
+  {% for game in data.result.games %}
+    <h1>League Id</h1>
+    <h2>{{ game.league_id }}</h2>
+    <h1>lobby_id</h1>
+    <h2>{{ game.lobby_id }}</h2>
+    <h1>People watching this shit</h1>
+    <h2>{{ game.spectators }}</h2>
+  {% endfor %}
+{% else %}
+  <h1>Hello World!</h1>
+{% endif %}
