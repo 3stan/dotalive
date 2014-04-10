@@ -21,8 +21,8 @@
 	  <table class="table">
 	  {% for game in data.result.games %}
 	  	<tr>
-	  	  <td>League Id</td>
-	  	  <td>{{ game.league_id }}</td>
+	  	  <td>League Name</td>
+	  	  <td><a href={{ game.tournament_url }}>{{ game.league_name }}</a></td>
 		<tr>
 		<tr>
 	  	  <td>People watching this shit</td>
@@ -43,13 +43,13 @@
 	    <tr>
 	      <td>Radiant Team Info:</td>
 	      <td>{{ game.radiant_team.team_name }}</td>
-	      <td><img height="30" src={{ game.radiant_team.team_logo }}></img></td>
+	      <td><img height="33" src={{ game.radiant_team.team_logo }}></img></td>
 	      <td>{{ game.radiant_team.complete }}</td>
 	    </tr>
 	    <tr>
 	      <td>Dire Team Info:</td>
 	      <td>{{ game.dire_team.team_name }}</td>
-	      <td><img height="30" src={{ game.dire_team.team_logo }}></img></td>
+	      <td><img height="33" src={{ game.dire_team.team_logo }}></img></td>
 	      <td>{{ game.dire_team.complete }}</td>
 	    </tr>
 	  {% endfor %}
