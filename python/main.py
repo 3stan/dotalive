@@ -5,14 +5,14 @@ import time
 import json
 import os
 import util
-app = Flask(__name__, static_folder='images', static_url_path='/images')
+app = Flask(__name__, static_folder='../images', static_url_path='/images', template_folder='../templates')
 
 lastFetched = 0
 
 cachedLeaguesDict = dict()
 cachedHeroesDict = dict()
 
-teamDict = {0: 'Radiant', 1: 'Dire', 2: 'Broadcaster', 3: 'Unassigned'}
+teamDict = {0: 'Radiant', 1: 'Dire', 2: 'Broadcaster', 3: 'Unassigned', 4: 'Unassigned'}
 
 testing = json.loads("""
 					{
@@ -131,7 +131,7 @@ testing = json.loads("""
 @app.before_first_request
 def initialize():
 	global cachedLeaguesDict, cachedHeroesDict
-	directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "images")
+	directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../images")
 	util.require_dir(directory)
 	util.require_dir(os.path.join(directory, "teams"))
 
@@ -141,7 +141,7 @@ def initialize():
 @app.route('/')
 def main_page():
 	global lastFetched, cachedHtml, heroPicSize, teamDict
-	directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "images")
+	directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../images")
 
 	now = long(round(time.time()))
 	if now - lastFetched > 1000000L:
@@ -162,14 +162,15 @@ def main_page():
 				player['account_url'] = util.getPlayerProfileUrl(str(player["account_id"]))
 				player['team'] = teamDict[player['team']]
 
-			radiant_logo_data = util.getTeamLogoData(game['radiant_team']['team_logo'])
-			dire_logo_data = util.getTeamLogoData(game['dire_team']['team_logo'])
+			if game['radiant_team']['team_logo'] != 0:
+				radiant_logo_data = util.getTeamLogoData(game['radiant_team']['team_logo'])
+				util.getTeamLogo(directory, radiant_logo_data['data']['url'], radiant_logo_data['data']['filename'])
+				game['radiant_team']['team_logo'] = os.path.join('images', radiant_logo_data['data']['filename'] + '.png')
 
-			util.getTeamLogo(directory, radiant_logo_data['data']['url'], radiant_logo_data['data']['filename'])
-			util.getTeamLogo(directory, dire_logo_data['data']['url'], dire_logo_data['data']['filename'])
-
-			game['radiant_team']['team_logo'] = os.path.join('images', radiant_logo_data['data']['filename'] + '.png')
-			game['dire_team']['team_logo'] = os.path.join('images', dire_logo_data['data']['filename'] + '.png')
+			if game['dire_team']['team_logo'] != 0:
+				dire_logo_data = util.getTeamLogoData(game['dire_team']['team_logo'])
+				util.getTeamLogo(directory, dire_logo_data['data']['url'], dire_logo_data['data']['filename'])
+				game['dire_team']['team_logo'] = os.path.join('images', dire_logo_data['data']['filename'] + '.png')
 
 	return render_template('main.html', data=testing)
 

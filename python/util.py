@@ -61,8 +61,8 @@ def require_dir(path):
             raise
 
 def getTeamLogoData(logoId):
-	response = urllib2.urlopen(logoUrl + '?key=' + apiKey + "&appid=570&ugcid=" + str(logoId))
-	return json.loads(response.read())
+    response = urllib2.urlopen(logoUrl + '?key=' + apiKey + "&appid=570&ugcid=" + str(logoId))
+    return json.loads(response.read())
 
 def getTeamLogo(directory, url, imageName):
 	filename = os.path.join(directory, imageName + ".png")
@@ -71,7 +71,6 @@ def getTeamLogo(directory, url, imageName):
 	    urllib.urlretrieve(url, filename)
 
 def getHeroPicUrl(heroId):
-    print(cachedHeroesDict[heroId]["name"])
     return "http://cdn.dota2.com/apps/dota2/images/heroes/{}_{}".format(cachedHeroesDict[heroId]["name"].replace("npc_dota_hero_", ""), heroPicSize)
 
 def getPlayerProfileUrl(playerId):
