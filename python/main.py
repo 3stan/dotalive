@@ -1,9 +1,13 @@
 from flask import Flask, render_template
 import urllib2
+import urllib
 import time
 import json
-app = Flask(__name__)
+import errno
+import os
+app = Flask(__name__, static_folder='images', static_url_path='/images')
 
+logoUrl = "http://api.steampowered.com/ISteamRemoteStorage/GetUGCFileDetails/v1/" #?key=APIKEYHERE&appid=570&ugcid="
 apiKey = '567159D5C2554BBE3419B4F5244C00CF'
 language = 'en_us'
 heroPicSize = "sb.png"
@@ -156,9 +160,37 @@ def get_heroes():
 		cachedHeroesDict[str(hero['id']) + "_localized"] = hero['localized_name']
 	return True
 
+def convertSteamId(id):
+    if len(id) == 17:
+        return int(id[3:]) - 61197960265728
+    else:
+        return '765' + str(int(id) + 61197960265728)
+
+def require_dir(path):
+    try:
+        os.makedirs(path)
+    except OSError, exc:
+        if exc.errno != errno.EEXIST:
+            raise
+
+def getTeamLogoData(logoId):
+	response = urllib2.urlopen(logoUrl + '?key=' + apiKey + "&appid=570&ugcid=" + str(logoId))
+	return json.loads(response.read())
+
+def getTeamLogo(directory, url, imageName):
+	filename = os.path.join(directory, imageName + ".png")
+
+	if not os.path.exists(filename):
+	    urllib.urlretrieve(url, filename)
+
 @app.route('/')
 def main_page():
 	global lastFetched, cachedHtml, cachedHeroesDict, cachedLeaguesDict, heroPicSize
+
+	directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "images")
+	require_dir(directory)
+	require_dir(os.path.join(directory, "teams"))
+
 	get_leagues()
 	get_heroes()
 	now = long(round(time.time()))
@@ -167,7 +199,9 @@ def main_page():
 		response = urllib2.urlopen('https://api.steampowered.com/IDOTA2Match_570/GetLiveLeagueGames/v0001/?key=' + apiKey + "&language=" + language)
 		cachedHtml = json.loads(response.read())
 		for game in testing['result']['games']:
+			
 			game['league_id'] = cachedLeaguesDict[game['league_id']]
+
 			for player in game['players']:
 				if player['hero_id'] == 0:
 					player['hero_id'] = "Spectator"
@@ -175,6 +209,17 @@ def main_page():
 				else:
 					player['hero_img'] = "http://cdn.dota2.com/apps/dota2/images/heroes/{}_{}".format(str.replace(str(cachedHeroesDict[str(player['hero_id']) + "_name"]), "npc_dota_hero_", ""), heroPicSize)
 					player['hero_id'] = cachedHeroesDict[str(player['hero_id']) + "_localized"]
+				player['account_url'] = "http://steamcommunity.com/profiles/{}".format(convertSteamId(str(player["account_id"])))
+
+			radiant_logo_data = getTeamLogoData(game['radiant_team']['team_logo'])
+			dire_logo_data = getTeamLogoData(game['dire_team']['team_logo'])
+
+			getTeamLogo(directory, radiant_logo_data['data']['url'], radiant_logo_data['data']['filename'])
+			getTeamLogo(directory, dire_logo_data['data']['url'], dire_logo_data['data']['filename'])
+
+			game['radiant_team']['team_logo'] = os.path.join('images', radiant_logo_data['data']['filename'] + '.png')
+			game['dire_team']['team_logo'] = os.path.join('images', dire_logo_data['data']['filename'] + '.png')
+
 	return render_template('main.html', data=testing)
 
 if __name__ == '__main__':

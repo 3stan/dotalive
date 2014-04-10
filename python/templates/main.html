@@ -25,10 +25,6 @@
 	  	  <td>{{ game.league_id }}</td>
 		<tr>
 		<tr>
-	  	  <td>Lobby Id</td>
-	  	  <td>{{ game.lobby_id }}</td>
-		<tr>
-		<tr>
 	  	  <td>People watching this shit</td>
 	  	  <td>{{ game.spectators }}</td>
 		<tr>
@@ -38,25 +34,22 @@
 		<tr>
 	    {% for player in game.players %}
 	      <tr>
-	    	<td>{{ player.account_id }}</td>
-	    	<td>{{ player.name }}</td>
+	    	<td><a href={{ player.account_url}}>{{ player.name }}</a></td>
 	    	<td>{{ player.hero_id }}</td>
-	    	<td><img src=  {{ player.hero_img | lower }}></img></td>
+	    	<td><img src={{ player.hero_img | lower }}></img></td>
 	    	<td>{{ player.team }}</td>
 		  </tr>
 	    {% endfor %}
 	    <tr>
 	      <td>Radiant Team Info:</td>
 	      <td>{{ game.radiant_team.team_name }}</td>
-	      <td>{{ game.radiant_team.team_id }}</td>
-	      <td>{{ game.radiant_team.team_logo }}</td>
+	      <td><img height="30" src={{ game.radiant_team.team_logo }}></img></td>
 	      <td>{{ game.radiant_team.complete }}</td>
 	    </tr>
 	    <tr>
 	      <td>Dire Team Info:</td>
 	      <td>{{ game.dire_team.team_name }}</td>
-	      <td>{{ game.dire_team.team_id }}</td>
-	      <td>{{ game.dire_team.team_logo }}</td>
+	      <td><img height="30" src={{ game.dire_team.team_logo }}></img></td>
 	      <td>{{ game.dire_team.complete }}</td>
 	    </tr>
 	  {% endfor %}
