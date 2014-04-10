@@ -35,7 +35,7 @@
 	    {% for player in game.players %}
 	      <tr>
 	    	<td><a href={{ player.account_url}}>{{ player.name }}</a></td>
-	    	<td>{{ player.hero_id }}</td>
+	    	<td>{{ player.hero_name_localized }}</td>
 	    	<td><img src={{ player.hero_img | lower }}></img></td>
 	    	<td>{{ player.team }}</td>
 		  </tr>

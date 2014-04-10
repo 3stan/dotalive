@@ -24,7 +24,6 @@ def make_econ_dota2_call(callType):
     return json.loads(response.read())
 
 def make_dota2_match_call(callType):
-    print('https://api.steampowered.com/IDOTA2Match_570/' + callType + '/v0001/?key=' + apiKey + "&language=" + language)
     response = urllib2.urlopen('https://api.steampowered.com/IDOTA2Match_570/' + callType + '/v0001/?key=' + apiKey + "&language=" + language)
     return json.loads(response.read())
 
@@ -45,8 +44,7 @@ def get_heroes():
         heroesFetched = True
         cachedHeroesResp = make_econ_dota2_call("GetHeroes")
     for hero in cachedHeroesResp['result']['heroes']:
-        cachedHeroesDict[str(hero['id']) + "_name"] = hero['name']
-        cachedHeroesDict[str(hero['id']) + "_localized"] = hero['localized_name']
+        cachedHeroesDict[hero['id']] = hero
     return cachedHeroesDict
 
 def convertSteamId(id):
@@ -73,7 +71,8 @@ def getTeamLogo(directory, url, imageName):
 	    urllib.urlretrieve(url, filename)
 
 def getHeroPicUrl(heroId):
-    return "http://cdn.dota2.com/apps/dota2/images/heroes/{}_{}".format(str.replace(str(cachedHeroesDict[heroId + "_name"]), "npc_dota_hero_", ""), heroPicSize)
+    print(cachedHeroesDict[heroId]["name"])
+    return "http://cdn.dota2.com/apps/dota2/images/heroes/{}_{}".format(cachedHeroesDict[heroId]["name"].replace("npc_dota_hero_", ""), heroPicSize)
 
 def getPlayerProfileUrl(playerId):
     return "http://steamcommunity.com/profiles/{}".format(convertSteamId(playerId))

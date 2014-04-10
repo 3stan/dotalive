@@ -8,7 +8,6 @@ import util
 app = Flask(__name__, static_folder='images', static_url_path='/images')
 
 lastFetched = 0
-heroPicSize = "sb.png"
 
 cachedLeaguesDict = dict()
 cachedHeroesDict = dict()
@@ -155,11 +154,11 @@ def main_page():
 
 			for player in game['players']:
 				if player['hero_id'] == 0:
-					player['hero_id'] = "Spectator"
+					player['hero_name_localized'] = "Spectator"
 					player['hero_img'] = ""
 				else:
-					player['hero_img'] = util.getHeroPicUrl(str(player['hero_id']))
-					player['hero_id'] = cachedHeroesDict[str(player['hero_id']) + "_localized"]
+					player['hero_img'] = util.getHeroPicUrl(player['hero_id'])
+					player['hero_name_localized'] = cachedHeroesDict[player['hero_id']]['localized_name']
 				player['account_url'] = util.getPlayerProfileUrl(str(player["account_id"]))
 				player['team'] = teamDict[player['team']]
 
