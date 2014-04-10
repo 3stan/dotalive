@@ -21,6 +21,12 @@ testing = json.loads("""
 			{
 				"players": [
 					{
+						"account_id": 22743308,
+						"name": "joinDOTA|KF91",
+						"hero_id": 0,
+						"team": 4
+					},
+					{
 						"account_id": 101851949,
 						"name": "WVW-Lerry",
 						"hero_id": 0,
