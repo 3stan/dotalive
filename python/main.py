@@ -160,7 +160,6 @@ def main_page():
 
 			for player in game['players']:
 				if player['hero_id'] == 0:
-					player['hero_name_localized'] = "Spectator"
 					player['hero_img'] = ""
 				else:
 					player['hero_img'] = util.getHeroPicUrl(player['hero_id'])
