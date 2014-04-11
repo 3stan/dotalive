@@ -1,2 +1,9 @@
 # This is my README
+<<<<<<< HEAD
 ( ?° ?? ?°)( ?° ?? ?°)( ?° ?? ?°)( ?° ?? ?°)
+=======
+
+
+
+HIIIII
+>>>>>>> ddcfe1d8c0cc5e7ad79deec396a7b81c6003cbdb
