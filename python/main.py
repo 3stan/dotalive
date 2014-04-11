@@ -12,7 +12,7 @@ lastFetched = 0
 cachedLeaguesDict = dict()
 cachedHeroesDict = dict()
 
-teamDict = {0: 'Radiant', 1: 'Dire', 2: 'Broadcaster', 3: 'Unassigned', 4: 'Unassigned'}
+cachedHtml = json.loads('{}')
 
 testing = json.loads("""
 					{
@@ -146,36 +146,13 @@ def initialize():
 
 @app.route('/')
 def main_page():
-	global lastFetched, cachedHtml, heroPicSize, teamDict
-	directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../images")
+	global lastFetched, cachedHtml
 
 	now = long(round(time.time()))
 	if now - lastFetched > 1000000L:
 		lastFetched = now
 		cachedHtml = util.make_dota2_match_call("GetLiveLeagueGames")
-		for game in testing['result']['games']:
-			
-			game['league_name'] = cachedLeaguesDict[game['league_id']]['name']
-			game['tournament_url'] = cachedLeaguesDict[game['league_id']]['tournament_url']
-
-			for player in game['players']:
-				if player['hero_id'] == 0:
-					player['hero_img'] = ""
-				else:
-					player['hero_img'] = util.getHeroPicUrl(player['hero_id'])
-					player['hero_name_localized'] = cachedHeroesDict[player['hero_id']]['localized_name']
-				player['account_url'] = util.getPlayerProfileUrl(str(player["account_id"]))
-				player['team'] = teamDict[player['team']]
-
-			if game['radiant_team']['team_logo'] != 0:
-				radiant_logo_data = util.getTeamLogoData(game['radiant_team']['team_logo'])
-				util.getTeamLogo(directory, radiant_logo_data['data']['url'], radiant_logo_data['data']['filename'])
-				game['radiant_team']['team_logo'] = os.path.join('images', radiant_logo_data['data']['filename'] + '.png')
-
-			if game['dire_team']['team_logo'] != 0:
-				dire_logo_data = util.getTeamLogoData(game['dire_team']['team_logo'])
-				util.getTeamLogo(directory, dire_logo_data['data']['url'], dire_logo_data['data']['filename'])
-				game['dire_team']['team_logo'] = os.path.join('images', dire_logo_data['data']['filename'] + '.png')
+		map(util.get_live_match_info, testing['result']['games'])
 
 	return render_template('main.html', data=testing)
 
