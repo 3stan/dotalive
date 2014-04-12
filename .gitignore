@@ -1,0 +1,5 @@
+#images that are downloaded
+images/*
+
+#crappy pyc files that are generated
+*.pyc
