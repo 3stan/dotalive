@@ -4,7 +4,13 @@ import urllib
 import time
 import json
 import os
+
+import sys
+sys.path.append(os.path.dirname(__file__) + '/classes/')
+
 import util
+
+
 app = Flask(__name__, static_folder='../images', static_url_path='/images', template_folder='../templates')
 
 lastFetched = 0
@@ -12,7 +18,7 @@ lastFetched = 0
 cachedLeaguesDict = dict()
 cachedHeroesDict = dict()
 
-cachedHtml = json.loads('{}')
+gameResults = list()
 
 testing = json.loads("""
 					{
@@ -128,6 +134,117 @@ testing = json.loads("""
 				"spectators": 723,
 				"tower_state": 4194302,
 				"league_id": 1097
+			},
+			{
+				"players": [
+					{
+						"account_id": 22743308,
+						"name": "joinDOTA|KF92",
+						"hero_id": 0,
+						"team": 4
+					},
+					{
+						"account_id": 101851949,
+						"name": "TEST",
+						"hero_id": 0,
+						"team": 2
+					},
+					{
+						"account_id": 139266129,
+						"name": "TEST1",
+						"hero_id": 98,
+						"team": 0
+					},
+					{
+						"account_id": 88990397,
+						"name": "TEST2",
+						"hero_id": 0,
+						"team": 2
+					},
+					{
+						"account_id": 47123324,
+						"name": "TEST3",
+						"hero_id": 0,
+						"team": 2
+					},
+					{
+						"account_id": 142750189,
+						"name": "TEST4",
+						"hero_id": 86,
+						"team": 0
+					},
+					{
+						"account_id": 85293283,
+						"name": "TEST5",
+						"hero_id": 0,
+						"team": 2
+					},
+					{
+						"account_id": 89371588,
+						"name": "TEST6",
+						"hero_id": 16,
+						"team": 1
+					},
+					{
+						"account_id": 99460568,
+						"name": "TEST7",
+						"hero_id": 96,
+						"team": 1
+					},
+					{
+						"account_id": 98878010,
+						"name": "TEST8",
+						"hero_id": 106,
+						"team": 1
+					},
+					{
+						"account_id": 114239371,
+						"name": "TEST9",
+						"hero_id": 92,
+						"team": 1
+					},
+					{
+						"account_id": 131237305,
+						"name": "TEST10",
+						"hero_id": 68,
+						"team": 0
+					},
+					{
+						"account_id": 101375717,
+						"name": "TEST11",
+						"hero_id": 17,
+						"team": 0
+					},
+					{
+						"account_id": 134729228,
+						"name": "TEST12",
+						"hero_id": 100,
+						"team": 0
+					},
+					{
+						"account_id": 123854991,
+						"name": "TEST13",
+						"hero_id": 9,
+						"team": 1
+					}
+				]
+				,
+				"radiant_team": {
+					"team_name": "NE Gaming",
+					"team_id": 633833,
+					"team_logo": 3336342992235688830,
+					"complete": true
+				},
+				"dire_team": {
+					"team_name": "LGD-GAMING",
+					"team_id": 15,
+					"team_logo": 630787216938014761,
+					"complete": true
+				},
+				"lobby_id": 23432170694743987,
+				"spectators": 111111,
+				"tower_state": 4194302,
+				"league_id": 1097
 			}
 		]
 		
@@ -146,15 +263,17 @@ def initialize():
 
 @app.route('/')
 def main_page():
-	global lastFetched, cachedHtml
+	global lastFetched, gameResults
 
 	now = long(round(time.time()))
 	if now - lastFetched > 1000000L:
 		lastFetched = now
 		cachedHtml = util.make_dota2_match_call("GetLiveLeagueGames")
-		map(util.get_live_match_info, testing['result']['games'])
 
-	return render_template('main.html', data=testing)
+		for game in testing['result']['games']:
+			gameResults.append(util.get_live_match_info(game))
+
+	return render_template('main.html', data=gameResults)
 
 if __name__ == '__main__':
     app.run(debug=True)

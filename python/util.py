@@ -3,6 +3,9 @@ import urllib
 import json
 import errno
 import os
+from TeamInfo import TeamInfo
+from GameInfo import GameInfo
+from PlayerInfo import PlayerInfo
 
 logoUrl = "http://api.steampowered.com/ISteamRemoteStorage/GetUGCFileDetails/v1/"
 apiKey = '567159D5C2554BBE3419B4F5244C00CF'
@@ -25,28 +28,37 @@ teamDict = {0: 'Radiant', 1: 'Dire', 2: 'Broadcaster', 3: 'Unassigned', 4: 'Unas
 
 def get_live_match_info(game):
 
-    game['league_name'] = cachedLeaguesDict[game['league_id']]['name']
-    game['tournament_url'] = cachedLeaguesDict[game['league_id']]['tournament_url']
+    resultGame = GameInfo()
+
+    resultGame.leagueName = cachedLeaguesDict[game['league_id']]['name']
+    resultGame.tournamentUrl = cachedLeaguesDict[game['league_id']]['tournament_url']
+    resultGame.numSpectators = game['spectators']
+    resultGame.towerState = game['tower_state']
+
+    resultGame.radiantTeamInfo = fillTeamData(game['radiant_team'])
+    resultGame.direTeamInfo = fillTeamData(game['dire_team'])
 
     for player in game['players']:
-        if player['hero_id'] == 0:
-            player['hero_img'] = ""
+        playerInfo = PlayerInfo()
+
+        if player['hero_id'] != 0:
+            playerInfo.heroSrcUrl = getHeroPicUrl(player['hero_id'])
+            playerInfo.heroName= cachedHeroesDict[player['hero_id']]['localized_name']
+        playerInfo.name = player['name']
+        playerInfo.steamUrl = getPlayerProfileUrl(str(player["account_id"]))
+
+        playerTeam = player['team']
+        if playerTeam == 0:
+            resultGame.radiantPlayers.append(playerInfo)
+        elif playerTeam == 1:
+            resultGame.direPlayers.append(playerInfo)
+        elif playerTeam == 2:
+            resultGame.broadcastPlayers.append(playerInfo)
         else:
-            player['hero_img'] = getHeroPicUrl(player['hero_id'])
-            player['hero_name_localized'] = cachedHeroesDict[player['hero_id']]['localized_name']
-        player['account_url'] = getPlayerProfileUrl(str(player["account_id"]))
-        player['team'] = teamDict[player['team']]
-
-    if game['radiant_team']['team_logo'] != 0:
-        radiant_logo_data = getTeamLogoData(game['radiant_team']['team_logo'])
-        getTeamLogo(directory, radiant_logo_data['data']['url'], radiant_logo_data['data']['filename'])
-        game['radiant_team']['team_logo'] = os.path.join('images', radiant_logo_data['data']['filename'] + '.png')
-
-    if game['dire_team']['team_logo'] != 0:
-        dire_logo_data = getTeamLogoData(game['dire_team']['team_logo'])
-        getTeamLogo(directory, dire_logo_data['data']['url'], dire_logo_data['data']['filename'])
-        game['dire_team']['team_logo'] = os.path.join('images', dire_logo_data['data']['filename'] + '.png')
-
+            resultGame.unassignedPlayers.append(playerInfo)
+    for a in resultGame.radiantPlayers:
+                print(a.name)
+    return resultGame
 
 def make_econ_dota2_call(callType):
     response = urllib2.urlopen('https://api.steampowered.com/IEconDOTA2_570/' + callType + '/v0001/?key=' + apiKey + "&language=" + language)
@@ -89,8 +101,28 @@ def require_dir(path):
         if exc.errno != errno.EEXIST:
             raise
 
+def fillTeamData(inputTeam):
+    teamInfo = TeamInfo()
+    teamInfo.teamName = inputTeam['team_name']
+    print(teamInfo.teamName)
+    teamInfo.isFullRoster = True if inputTeam['complete'] == "true" else False
+
+    if inputTeam['team_logo'] != 0:
+        logo_data = getTeamLogoData(inputTeam['team_logo'])
+        if logo_data != -1:
+            getTeamLogo(directory, logo_data['data']['url'], logo_data['data']['filename'])
+            teamInfo.teamLogoSrc = os.path.join('images', logo_data['data']['filename'] + '.png')
+        else:
+            teamInfo.teamLogoSrc = "none"
+
+    return teamInfo
+
 def getTeamLogoData(logoId):
-    response = urllib2.urlopen(logoUrl + '?key=' + apiKey + "&appid=570&ugcid=" + str(logoId))
+    print(logoUrl + '?key=' + apiKey + "&appid=570&ugcid=" + str(logoId))
+    try:
+        response = urllib2.urlopen(logoUrl + '?key=' + apiKey + "&appid=570&ugcid=" + str(logoId))
+    except:
+        return -1
     return json.loads(response.read())
 
 def getTeamLogo(directory, url, imageName):

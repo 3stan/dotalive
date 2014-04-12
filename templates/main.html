@@ -17,40 +17,60 @@
     <![endif]-->
   </head>
   <body>
-    {% if data.result %}
+    {% if data %}
 	  <table class="table">
-	  {% for game in data.result.games %}
+	  {% for game in data %}
 	  	<tr>
 	  	  <td>League Name</td>
-	  	  <td><a href={{ game.tournament_url }}>{{ game.league_name }}</a></td>
+	  	  <td><a href={{ game.tournamentUrl }}>{{ game.leagueName }}</a></td>
 		<tr>
 		<tr>
 	  	  <td>People watching this shit</td>
-	  	  <td>{{ game.spectators }}</td>
+	  	  <td>{{ game.numSpectators }}</td>
 		<tr>
 		<tr>
 	  	  <td>Tower Status</td>
-	  	  <td>{{ game.tower_state }}</td>
+	  	  <td>{{ game.towerState }}</td>
 		<tr>
-	    {% for player in game.players %}
+	    {% for player in game.radiantPlayers %}
 	      <tr>
-	    	<td><a href={{ player.account_url}}>{{ player.name }}</a></td>
-	    	<td>{{ player.hero_name_localized }}</td>
-	    	<td><img src={{ player.hero_img | lower }}></img></td>
-	    	<td>{{ player.team }}</td>
+	    	<td><a href={{ player.steamUrl }}>{{ player.name }}</a></td>
+	    	<td>{{ player.heroName }}</td>
+	    	<td><img src={{ player.heroSrcUrl | lower }}></img></td>
+	    	<td>Radiant</td>
+		  </tr>
+	    {% endfor %}
+	    {% for player in game.direPlayers %}
+	      <tr>
+	    	<td><a href={{ player.steamUrl }}>{{ player.name }}</a></td>
+	    	<td>{{ player.heroName }}</td>
+	    	<td><img src={{ player.heroSrcUrl | lower }}></img></td>
+	    	<td>Dire</td>
+		  </tr>
+	    {% endfor %}
+	    {% for player in game.broadcastPlayers %}
+	      <tr>
+	    	<td><a href={{ player.steamUrl }}>{{ player.name }}</a></td>
+	    	<td>Broadcaster</td>
+		  </tr>
+	    {% endfor %}
+	    {% for player in game.unassignedPlayers %}
+	      <tr>
+	    	<td><a href={{ player.steamUrl }}>{{ player.name }}</a></td>
+	    	<td>Unassigned</td>
 		  </tr>
 	    {% endfor %}
 	    <tr>
 	      <td>Radiant Team Info:</td>
-	      <td>{{ game.radiant_team.team_name }}</td>
-	      <td><img height="33" src={{ game.radiant_team.team_logo }}></img></td>
-	      <td>{{ game.radiant_team.complete }}</td>
+	      <td>{{ game.radiantTeamInfo.teamName }}</td>
+	      <td><img height="33" src={{ game.radiantTeamInfo.teamLogoSrc }}></img></td>
+	      <td>{{ game.radiantTeamInfo.isFullRoster }}</td>
 	    </tr>
 	    <tr>
 	      <td>Dire Team Info:</td>
-	      <td>{{ game.dire_team.team_name }}</td>
-	      <td><img height="33" src={{ game.dire_team.team_logo }}></img></td>
-	      <td>{{ game.dire_team.complete }}</td>
+	      <td>{{ game.direTeamInfo.teamName }}</td>
+	      <td><img height="33" src={{ game.direTeamInfo.teamLogoSrc }}></img></td>
+	      <td>{{ game.direTeamInfo.isFullRoster }}</td>
 	    </tr>
 	  {% endfor %}
 	  </table>
