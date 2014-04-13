@@ -1,5 +1,6 @@
 import TeamInfo
 
+#Object for information pertaining to a live game
 class GameInfo:
 	def __init__(self):
 		self.leagueName = ""

@@ -10,16 +10,20 @@ sys.path.append(os.path.dirname(__file__) + '/classes/')
 
 import util
 
-
 app = Flask(__name__, static_folder='../images', static_url_path='/images', template_folder='../templates')
 
+#Time that we last fetched data from Valve's web endpoint (GetLiveLeagueGames)
 lastFetched = 0
 
+#Dictionary of all the leagues that are available in the client
 cachedLeaguesDict = dict()
+#Dictionary of all heroes in the game
 cachedHeroesDict = dict()
 
+#Cached result of live games
 gameResults = list()
 
+#For testing purposes; will remove once we deploy to prod
 testing = json.loads("""
 					{
 	"result": {
@@ -251,6 +255,8 @@ testing = json.loads("""
 	}
 }""")
 
+#Stuff to do before out first request; created images directory if it doesn't exist,
+#fill the dictionaries with the needed data.
 @app.before_first_request
 def initialize():
 	global cachedLeaguesDict, cachedHeroesDict
@@ -261,16 +267,19 @@ def initialize():
 	cachedLeaguesDict = util.get_leagues()
 	cachedHeroesDict = util.get_heroes()
 
+#What we do when we hit the main page
 @app.route('/')
 def main_page():
 	global lastFetched, gameResults
 
 	now = long(round(time.time()))
+	#Make sure we throttle calls to Valve's endpoint
 	if now - lastFetched > 1000000L:
 		lastFetched = now
 		cachedHtml = util.make_dota2_match_call("GetLiveLeagueGames")
 
-		for game in testing['result']['games']:
+		#All the important shit is done in util.py
+		for game in cachedHtml['result']['games']:
 			gameResults.append(util.get_live_match_info(game))
 
 	return render_template('main.html', data=gameResults)

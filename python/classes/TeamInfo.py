@@ -1,3 +1,4 @@
+#Object for information pertaining to a team
 class TeamInfo:
 	def __init__(self):
 		self.teamName = ""
