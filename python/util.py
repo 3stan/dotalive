@@ -131,22 +131,28 @@ def fillTeamData(inputTeam):
     teamInfo.isFullRoster = True if inputTeam['complete'] == "true" else False
 
     if inputTeam['team_logo'] != 0:
-        logo_data = getTeamLogoData(inputTeam['team_logo'])
-        if logo_data != -1:
-            getTeamLogo(imageDirectory, logo_data['data']['url'], logo_data['data']['filename'])
-            teamInfo.teamLogoSrc = os.path.join('images', logo_data['data']['filename'] + '.png')
-        else:
+        strTeamLogo = str(inputTeam['team_logo'])
+        logo_data = getTeamLogoData(imageDirectory, strTeamLogo)
+        if logo_data == "no_logo":
             teamInfo.teamLogoSrc = "none"
+        elif logo_data == "logo_exists":
+            teamInfo.teamLogoSrc = os.path.join('images', strTeamLogo + '.png')
+        else:
+            getTeamLogo(imageDirectory, logo_data['data']['url'], strTeamLogo)
+            teamInfo.teamLogoSrc = os.path.join('images', strTeamLogo + '.png')
 
     return teamInfo
 
 #Fetches the team's logo data. 
 #@logoId is the ID of the logo itself, not the team
-def getTeamLogoData(logoId):
+def getTeamLogoData(directory, logoId):
+    filename = os.path.join(directory, logoId + ".png")
+    if os.path.exists(filename):
+        return "logo_exists"
     try:
         response = urllib2.urlopen(logoUrl + '?key=' + apiKey + "&appid=570&ugcid=" + str(logoId))
     except:
-        return -1
+        return "no_logo"
     return json.loads(response.read())
 
 #Downloads the team's logo from Valve's server
