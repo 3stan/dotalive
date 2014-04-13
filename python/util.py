@@ -18,7 +18,7 @@ language = 'en_us'
 heroPicSize = "sb.png"
 
 #OS related stuff; where to save and fetch images from
-imageDirectory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../images")
+imageDirectory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../public")
 
 #Variables related to the league dictionary
 #Dictionary KVP is:
@@ -139,10 +139,10 @@ def fillTeamData(inputTeam):
         if logo_data == "no_logo":
             teamInfo.teamLogoSrc = "none"
         elif logo_data == "logo_exists":
-            teamInfo.teamLogoSrc = os.path.join('images', strTeamLogo + '.png')
+            teamInfo.teamLogoSrc = os.path.join('public/team_logos', strTeamLogo + '.png')
         else:
             getTeamLogo(imageDirectory, logo_data['data']['url'], strTeamLogo)
-            teamInfo.teamLogoSrc = os.path.join('images', strTeamLogo + '.png')
+            teamInfo.teamLogoSrc = os.path.join('public/team_logos', strTeamLogo + '.png')
 
     return teamInfo
 
@@ -160,7 +160,7 @@ def getTeamLogoData(directory, logoId):
 
 #Downloads the team's logo from Valve's server
 def getTeamLogo(directory, url, imageName):
-	filename = os.path.join(directory, imageName + ".png")
+	filename = os.path.join(directory, 'team_logos/' + imageName + ".png")
 
     #Only download if the file does not exist yet
 	if not os.path.exists(filename):

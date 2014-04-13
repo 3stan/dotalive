@@ -12,7 +12,7 @@ from UpdateInfo import UpdateInfo, Update
 
 import util
 
-app = Flask(__name__, static_folder='../images', static_url_path='/images', template_folder='../templates')
+app = Flask(__name__, static_folder='../public', static_url_path='/public', template_folder='../templates')
 
 #Time that we last fetched data from Valve's web endpoint (GetLiveLeagueGames)
 lastFetched = 0
@@ -263,9 +263,9 @@ testing = json.loads("""
 @app.before_first_request
 def initialize():
 	global cachedLeaguesDict, cachedHeroesDict
-	directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../images")
+	directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../public")
 	util.require_dir(directory)
-	util.require_dir(os.path.join(directory, "teams"))
+	util.require_dir(os.path.join(directory, "team_logos"))
 
 	cachedLeaguesDict = util.get_leagues()
 	cachedHeroesDict = util.get_heroes()
