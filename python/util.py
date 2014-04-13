@@ -47,6 +47,7 @@ def get_live_match_info(game):
     resultGame.tournamentUrl = cachedLeaguesDict[game['league_id']]['tournament_url']
     resultGame.numSpectators = game['spectators']
     resultGame.towerState = game['tower_state']
+    resultGame.lobbyId = game['lobby_id']
 
     #Fill in team data with a helper function
     resultGame.radiantTeamInfo = fillTeamData(game['radiant_team'])
@@ -57,6 +58,8 @@ def get_live_match_info(game):
         playerInfo = PlayerInfo()
 
         if player['hero_id'] != 0:
+            #If a hero is assigned, that's a dirty way of checking if a game started
+            resultGame.gameStarted = True
             playerInfo.heroSrcUrl = getHeroPicUrl(player['hero_id'])
             playerInfo.heroName= cachedHeroesDict[player['hero_id']]['localized_name']
         playerInfo.name = player['name']

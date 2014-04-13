@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import urllib2
 import urllib
 import time
@@ -7,6 +7,8 @@ import os
 
 import sys
 sys.path.append(os.path.dirname(__file__) + '/classes/')
+
+from UpdateInfo import UpdateInfo, Update
 
 import util
 
@@ -22,6 +24,7 @@ cachedHeroesDict = dict()
 
 #Cached result of live games
 gameResults = list()
+gameStatuses = dict()
 
 #For testing purposes; will remove once we deploy to prod
 testing = json.loads("""
@@ -276,13 +279,87 @@ def main_page():
 	#Make sure we throttle calls to Valve's endpoint
 	if now - lastFetched > 1000000L:
 		lastFetched = now
+		intermediateGameResults = list()
 		cachedHtml = util.make_dota2_match_call("GetLiveLeagueGames")
 
 		#All the important shit is done in util.py
 		for game in cachedHtml['result']['games']:
-			gameResults.append(util.get_live_match_info(game))
+			gameInfo = util.get_live_match_info(game)
+			gameStatuses[gameInfo.lobbyId] = gameInfo
+			intermediateGameResults.append(gameInfo)
+
+		gameResults = intermediateGameResults
 
 	return render_template('main.html', data=gameResults)
+
+#How we give back updates to the page.
+#@matches is in the form of:
+#	gameId:gameStarted
+#Comma delimited.
+@app.route('/getUpdates/<matches>')
+def get_updates(matches):
+	global lastFetched, gameResults, gameStatuses
+
+	now = long(round(time.time()))
+	intermediateGameResults = list()
+	intermediateGameStatuses = dict()
+	#Make sure we throttle calls to Valve's endpoint
+	if now - lastFetched > 1L:
+		lastFetched = now
+		cachedHtml = util.make_dota2_match_call("GetLiveLeagueGames")
+
+		#All the important shit is done in util.py
+		for game in cachedHtml['result']['games']:
+			intermediateGameResults.append(util.get_live_match_info(game))
+
+		gameResults = intermediateGameResults
+
+	updateInfo = UpdateInfo()
+
+	newGamesRemoved = list()
+
+	for match in matches.split(","):
+		matchInfo = match.split(":")
+		matchId = matchInfo[0]
+		matchStatus = matchInfo[1]
+
+		print(matchId)
+		print(gameStatuses.keys())
+
+		#This is where shit gets tricky
+		#If it's not in the dictionary, then it's a new game
+		if not long(matchId) in gameStatuses:
+			updateInfo.newGames.append(matchId)
+		else:
+			newGamesRemoved.append(match)
+
+	for game in intermediateGameResults:
+		intermediateGameStatuses[game.lobbyId] = game
+
+	gameStatuses = intermediateGameStatuses
+
+	for match in newGamesRemoved:
+		matchInfo = match.split(":")
+		matchId = matchInfo[0]
+		matchStatus = matchInfo[1]
+
+		#If it still does not exist in the dictionary, that means the game is done
+		if not long(matchId) in gameStatuses:
+			updateInfo.finishedGames.append(matchId)
+		else:
+			#This means that the game started
+			if bool(matchStatus) != gameStatuses[long(matchId)].gameStarted:
+				updateInfo.startedGames.append(gameStatuses[long(matchId)])
+			#Nothing, the game is still happenin'
+			else:
+				update = Update()
+				update.lobbyId = gameStatuses[long(matchId)].lobbyId
+				update.towerStatus = gameStatuses[long(matchId)].towerState
+				update.numSpectators = gameStatuses[long(matchId)].numSpectators
+
+				updateInfo.updates.append(update)
+
+	return updateInfo.to_JSON()
 
 if __name__ == '__main__':
     app.run(debug=True)
