@@ -1,5 +1,5 @@
 #images that are downloaded
-images/*
+public/team_logos/*
 
 #crappy pyc files that are generated
 *.pyc
