@@ -314,6 +314,9 @@ def get_updates(matches):
 
 		gameResults = intermediateGameResults
 
+	for game in intermediateGameResults:
+		intermediateGameStatuses[game.lobbyId] = game
+
 	updateInfo = UpdateInfo()
 
 	newGamesRemoved = list()
@@ -323,18 +326,14 @@ def get_updates(matches):
 		matchId = matchInfo[0]
 		matchStatus = matchInfo[1]
 
-		print(matchId)
-		print(gameStatuses.keys())
+		print(intermediateGameStatuses.keys())
 
 		#This is where shit gets tricky
 		#If it's not in the dictionary, then it's a new game
 		if not long(matchId) in gameStatuses:
-			updateInfo.newGames.append(matchId)
+			updateInfo.newGames.append(intermediateGameStatuses[long(matchId)])
 		else:
 			newGamesRemoved.append(match)
-
-	for game in intermediateGameResults:
-		intermediateGameStatuses[game.lobbyId] = game
 
 	gameStatuses = intermediateGameStatuses
 
