@@ -1,6 +1,7 @@
 <div class="container">
-	<div class="row center-block">
-	  <div class="col-md-12 center-block bg-warning" style="border-radius:5px">
+	<div class="row">
+	  <div class="col-md-1"></div>	      
+	  <div class="col-md-10 bg-warning" style="border-radius:5px">
 
 		<table class="table" style="margin-bottom:0px">
 			<tr>
@@ -12,7 +13,7 @@
 		</table>
 
 	    <div class="row">
-	      <div class="col-md-6 bg-success center-block">
+	      <div class="col-md-6 bg-success">
 	      	<table class="table" style="margin-bottom:0px; width: auto">
 	      		<tr>
 	      			<td align="center" style="width: 99%"><h4>{{ game.radiantTeamInfo.teamName }}</h4></td>
@@ -22,14 +23,15 @@
 	      	<table class="table" style="margin-bottom:0px">
 		      	{% for player in game.radiantPlayers %}
 				  <tr>
-					<td><a href={{ player.steamUrl }}>{{ player.name }}</a></td>
-					<td align="right"><img style="border-radius:5px;" src={{ player.heroSrcUrl | lower }}></img></td>
+					<td style="width: 70%"><a href={{ player.steamUrl }}>{{ player.name }}</a></td>
+					<td align="right" style="width: 1%"><img style="border-radius:5px;" src={{ player.heroSrcUrl | lower }}></img></td>
+					<td style="width: 29%">&nbsp</td>
 				  </tr>
 				{% endfor %}
 			</table>
 	      </div>
 
-	      <div class="col-md-6 bg-danger center-block">
+	      <div class="col-md-6 bg-danger">
 	      	<table class="table" style="margin-bottom:0px; width: auto">
 	        	<tr>
   					<td style="width: 1%"><img height="33" src={{ game.direTeamInfo.teamLogoSrc }}></img></td>
@@ -39,8 +41,9 @@
 	        <table class="table" style="margin-bottom:0px">
 	        	{% for player in game.direPlayers %}
 				  <tr>
-					<td><img style="border-radius:5px;" src={{ player.heroSrcUrl | lower }}></img></td>
-					<td align="right"><a href={{ player.steamUrl }}>{{ player.name }}</a></td>
+					<td style="width: 29%">&nbsp</td>
+					<td style="width: 1%"><img style="border-radius:5px;" src={{ player.heroSrcUrl | lower }}></img></td>
+					<td align="right" style="width: 70%"><a href={{ player.steamUrl }}>{{ player.name }}</a></td>
 				  </tr>
 				{% endfor %}
 	        </table>
@@ -70,6 +73,7 @@
         {% endif %}
 	  </div>
 	</div>
+	<div class="col-md-1"></div>	      
 </div>
 
 <br>
