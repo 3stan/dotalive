@@ -137,7 +137,7 @@ def fillTeamData(inputTeam):
         strTeamLogo = str(inputTeam['team_logo'])
         logo_data = getTeamLogoData(imageDirectory, strTeamLogo)
         if logo_data == "no_logo":
-            teamInfo.teamLogoSrc = "none"
+            teamInfo.teamLogoSrc = ""
         elif logo_data == "logo_exists":
             teamInfo.teamLogoSrc = os.path.join('public/team_logos', strTeamLogo + '.png')
         else:

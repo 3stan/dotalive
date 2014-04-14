@@ -1,0 +1,81 @@
+<div class="container">
+	<div class="row center-block">
+	  <div class="col-md-12 center-block bg-warning" style="border-radius:5px">
+
+		<table class="table" style="margin-bottom:0px">
+			<tr>
+  				<td style="text-align:center"><a href={{ game.tournamentUrl }}>{{ game.leagueName }}</a></td>
+			</tr>
+			<tr>
+				<td style="text-align:center">Number of Spectators: {{ game.numSpectators }}</td>
+			</tr>
+		</table>
+
+	    <div class="row">
+	      <div class="col-md-6 bg-success center-block">
+	      	<table class="table" style="margin-bottom:0px; width: auto">
+	      		<tr>
+	      			<td align="center" style="width: 99%"><h4>{{ game.radiantTeamInfo.teamName }}</h4></td>
+  					<td align="right" style="width: 1%"><img height="33" src={{ game.radiantTeamInfo.teamLogoSrc }}></img></td>
+      			</tr>
+			</table>
+	      	<table class="table" style="margin-bottom:0px">
+		      	{% for player in game.radiantPlayers %}
+				  <tr>
+					<td><a href={{ player.steamUrl }}>{{ player.name }}</a></td>
+					<td align="right"><img style="border-radius:5px;" src={{ player.heroSrcUrl | lower }}></img></td>
+				  </tr>
+				{% endfor %}
+			</table>
+	      </div>
+
+	      <div class="col-md-6 bg-danger center-block">
+	      	<table class="table" style="margin-bottom:0px; width: auto">
+	        	<tr>
+  					<td style="width: 1%"><img height="33" src={{ game.direTeamInfo.teamLogoSrc }}></img></td>
+  					<td align="center" style="width: 99%"><h4>{{ game.direTeamInfo.teamName }}</h4></td>
+        		</tr>
+	        </table>
+	        <table class="table" style="margin-bottom:0px">
+	        	{% for player in game.direPlayers %}
+				  <tr>
+					<td><img style="border-radius:5px;" src={{ player.heroSrcUrl | lower }}></img></td>
+					<td align="right"><a href={{ player.steamUrl }}>{{ player.name }}</a></td>
+				  </tr>
+				{% endfor %}
+	        </table>
+	      </div>
+	    </div>
+
+		{% if game.broadcastPlayers %}
+        <table class="table" style="margin-bottom:0px">
+        	<tr>
+        		<td>Broadcasters:</td>
+			{% for player in game.broadcastPlayers %}
+				<td><a href={{ player.steamUrl }}>{{ player.name }}</a></td>
+			{% endfor %}
+			<tr>
+        </table>
+        {% endif %}
+
+        {% if game.unassignedPlayers %}
+        <table class="table" style="margin-bottom:0px">
+			<tr>
+				<td>Unassigned:</td>
+			{% for player in game.unassignedPlayers %}
+				<td><a href={{ player.steamUrl }}>{{ player.name }}</a></td>
+			{% endfor %}
+			<tr>
+        </table>
+        {% endif %}
+	  </div>
+	</div>
+</div>
+
+<br>
+<br>
+
+<tr>
+  <td>Tower Status</td>
+  <td>{{ game.towerState }}</td>
+<tr>

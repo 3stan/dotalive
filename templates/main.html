@@ -5,9 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Figuring out shit</title>
-
     <!-- Bootstrap -->
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="../public/css/main.css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -16,67 +16,38 @@
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
+
   <body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Dota-Live</a>
+        </div>
+        <div class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+
     {% if data %}
-	  <table class="table">
 	  {% for game in data %}
-	  	<tr>
-	  	  <td>League Name</td>
-	  	  <td><a href={{ game.tournamentUrl }}>{{ game.leagueName }}</a></td>
-		<tr>
-		<tr>
-	  	  <td>People watching this shit</td>
-	  	  <td>{{ game.numSpectators }}</td>
-		<tr>
-		<tr>
-	  	  <td>Tower Status</td>
-	  	  <td>{{ game.towerState }}</td>
-		<tr>
-	    {% for player in game.radiantPlayers %}
-	      <tr>
-	    	<td><a href={{ player.steamUrl }}>{{ player.name }}</a></td>
-	    	<td>{{ player.heroName }}</td>
-	    	<td><img src={{ player.heroSrcUrl | lower }}></img></td>
-	    	<td>Radiant</td>
-		  </tr>
-	    {% endfor %}
-	    {% for player in game.direPlayers %}
-	      <tr>
-	    	<td><a href={{ player.steamUrl }}>{{ player.name }}</a></td>
-	    	<td>{{ player.heroName }}</td>
-	    	<td><img src={{ player.heroSrcUrl | lower }}></img></td>
-	    	<td>Dire</td>
-		  </tr>
-	    {% endfor %}
-	    {% for player in game.broadcastPlayers %}
-	      <tr>
-	    	<td><a href={{ player.steamUrl }}>{{ player.name }}</a></td>
-	    	<td>Broadcaster</td>
-		  </tr>
-	    {% endfor %}
-	    {% for player in game.unassignedPlayers %}
-	      <tr>
-	    	<td><a href={{ player.steamUrl }}>{{ player.name }}</a></td>
-	    	<td>Unassigned</td>
-		  </tr>
-	    {% endfor %}
-	    <tr>
-	      <td>Radiant Team Info:</td>
-	      <td>{{ game.radiantTeamInfo.teamName }}</td>
-	      <td><img height="33" src={{ game.radiantTeamInfo.teamLogoSrc }}></img></td>
-	      <td>{{ game.radiantTeamInfo.isFullRoster }}</td>
-	    </tr>
-	    <tr>
-	      <td>Dire Team Info:</td>
-	      <td>{{ game.direTeamInfo.teamName }}</td>
-	      <td><img height="33" src={{ game.direTeamInfo.teamLogoSrc }}></img></td>
-	      <td>{{ game.direTeamInfo.isFullRoster }}</td>
-	    </tr>
+	  	{% include('game.html') %}
 	  {% endfor %}
-	  </table>
 	{% else %}
-	  <h1>Hello World!</h1>
+	  <h3 style="text-align:center">There are currently no live games!</div>
 	{% endif %}
+
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 	<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
