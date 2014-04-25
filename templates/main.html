@@ -42,7 +42,7 @@
 
     {% if data %}
 	  {% for game in data %}
-	  	{% include('game.html') %}
+	  	<div>{% include('game.html') %}</div>
 	  {% endfor %}
 	{% else %}
 	  <h3 style="text-align:center">There are currently no live games!</div>

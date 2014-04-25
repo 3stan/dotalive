@@ -277,14 +277,14 @@ def main_page():
 
 	now = long(round(time.time()))
 	#Make sure we throttle calls to Valve's endpoint
-	if now - lastFetched > 1L:
+	if now - lastFetched > 100000L:
 		print("refreshing")
 		lastFetched = now
 		intermediateGameResults = list()
 		cachedHtml = util.make_dota2_match_call("GetLiveLeagueGames")
 
 		#All the important shit is done in util.py
-		for game in cachedHtml['result']['games']:
+		for game in testing['result']['games']:
 			gameInfo = util.get_live_match_info(game)
 			gameStatuses[gameInfo.lobbyId] = gameInfo
 			intermediateGameResults.append(gameInfo)
