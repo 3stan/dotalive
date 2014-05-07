@@ -10,3 +10,7 @@ body {
 .table>tfoot>tr>td {
 	border-top:0;
 }
+
+.game-spacer{
+	height: 60px;
+}
