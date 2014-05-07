@@ -286,9 +286,11 @@ def main_page():
 
 		#All the important shit is done in util.py
 		for game in cachedHtml['result']['games']:
+			print("Updating game info")
 			gameInfo = util.get_live_match_info(game)
 			gameStatuses[gameInfo.lobbyId] = gameInfo
 			intermediateGameResults.append(gameInfo)
+			print("Done updating game info")
 
 		gameResults = intermediateGameResults
 

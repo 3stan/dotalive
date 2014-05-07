@@ -18,7 +18,7 @@ language = 'en_us'
 heroPicSize = "sb.png"
 
 #OS related stuff; where to save and fetch images from
-imageDirectory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../public")
+imageDirectory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../public/team_logos")
 
 #Variables related to the league dictionary
 #Dictionary KVP is:
@@ -42,16 +42,20 @@ def get_live_match_info(game):
     #Create the object first
     resultGame = GameInfo()
 
+    print("Basic game info")
     #Shit's that easy to fill in
     resultGame.leagueName = cachedLeaguesDict[game['league_id']]['name']
     resultGame.tournamentUrl = cachedLeaguesDict[game['league_id']]['tournament_url']
     resultGame.numSpectators = game['spectators']
     resultGame.towerState = game['tower_state']
     resultGame.lobbyId = game['lobby_id']
+    print("Done basic info")
 
+    print("Getting team data")
     #Fill in team data with a helper function
     resultGame.radiantTeamInfo = fillTeamData(game['radiant_team'])
     resultGame.direTeamInfo = fillTeamData(game['dire_team'])
+    print("Done getting team data")
 
     heroesPicked = 0
 
@@ -62,7 +66,7 @@ def get_live_match_info(game):
         if player['hero_id'] != 0:
             heroesPicked += 1
             playerInfo.heroSrcUrl = getHeroPicUrl(player['hero_id'])
-            playerInfo.heroName= cachedHeroesDict[player['hero_id']]['localized_name']
+            playerInfo.heroName = cachedHeroesDict[player['hero_id']]['localized_name']
         playerInfo.name = player['name']
         playerInfo.steamUrl = getPlayerProfileUrl(str(player["account_id"]))
         playerInfo.steamId = player["account_id"]
