@@ -53,17 +53,19 @@ def get_live_match_info(game):
     resultGame.radiantTeamInfo = fillTeamData(game['radiant_team'])
     resultGame.direTeamInfo = fillTeamData(game['dire_team'])
 
+    heroesPicked = 0
+
     #Fill in player data
     for player in game['players']:
         playerInfo = PlayerInfo()
 
         if player['hero_id'] != 0:
-            #If a hero is assigned, that's a dirty way of checking if a game started
-            resultGame.gameStarted = True
+            heroesPicked += 1
             playerInfo.heroSrcUrl = getHeroPicUrl(player['hero_id'])
             playerInfo.heroName= cachedHeroesDict[player['hero_id']]['localized_name']
         playerInfo.name = player['name']
         playerInfo.steamUrl = getPlayerProfileUrl(str(player["account_id"]))
+        playerInfo.steamId = player["account_id"]
 
         playerTeam = player['team']
         if playerTeam == 0:
@@ -74,6 +76,9 @@ def get_live_match_info(game):
             resultGame.broadcastPlayers.append(playerInfo)
         else:
             resultGame.unassignedPlayers.append(playerInfo)
+
+    if heroesPicked > 9:
+        resultGame.gameStarted = True
 
     #Return the full object
     return resultGame
@@ -86,6 +91,7 @@ def make_econ_dota2_call(callType):
 #If we need to make any calls to the match server, we use this
 def make_dota2_match_call(callType):
     response = urllib2.urlopen(matchUrl + callType + '/v0001/?key=' + apiKey + "&language=" + language)
+    print(matchUrl + callType + '/v0001/?key=' + apiKey + "&language=" + language)
     return json.loads(response.read())
 
 #Function that gets all league data from the Valve servers and fills the dictionary.
@@ -174,3 +180,6 @@ def getHeroPicUrl(heroId):
 #@playerId is a 32-bit version of their steamId
 def getPlayerProfileUrl(playerId):
     return profileUrl + "{}".format(convertSteamId(playerId))
+
+def str2bool(v):
+  return v.lower() == "true"

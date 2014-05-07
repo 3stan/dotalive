@@ -273,23 +273,29 @@ def initialize():
 #What we do when we hit the main page
 @app.route('/')
 def main_page():
-	global lastFetched, gameResults
+	global lastFetched, gameResults, gameStatuses
 
 	now = long(round(time.time()))
 	#Make sure we throttle calls to Valve's endpoint
-	if now - lastFetched > 100000L:
+	if now - lastFetched > 1L:
 		print("refreshing")
 		lastFetched = now
 		intermediateGameResults = list()
+		intermediateGameStatuses = dict()
 		cachedHtml = util.make_dota2_match_call("GetLiveLeagueGames")
 
 		#All the important shit is done in util.py
-		for game in testing['result']['games']:
+		for game in cachedHtml['result']['games']:
 			gameInfo = util.get_live_match_info(game)
 			gameStatuses[gameInfo.lobbyId] = gameInfo
 			intermediateGameResults.append(gameInfo)
 
 		gameResults = intermediateGameResults
+
+		for game in gameResults:
+			intermediateGameStatuses[game.lobbyId] = game
+
+		gameStatuses = intermediateGameStatuses
 
 	return render_template('main.html', data=gameResults)
 
@@ -348,7 +354,7 @@ def get_updates(matches):
 			updateInfo.finishedGames.append(matchId)
 		else:
 			#This means that the game started
-			if bool(matchStatus) != gameStatuses[long(matchId)].gameStarted:
+			if util.str2bool(matchStatus) != gameStatuses[long(matchId)].gameStarted:
 				updateInfo.startedGames.append(gameStatuses[long(matchId)])
 			#Nothing, the game is still happenin'
 			else:
