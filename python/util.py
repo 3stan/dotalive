@@ -170,7 +170,7 @@ def getTeamLogoData(directory, logoId):
 
 #Downloads the team's logo from Valve's server
 def getTeamLogo(directory, url, imageName):
-	filename = os.path.join(directory, 'team_logos/' + imageName + ".png")
+	filename = os.path.join(directory, imageName + ".png")
 
     #Only download if the file does not exist yet
 	if not os.path.exists(filename):
