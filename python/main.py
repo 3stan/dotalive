@@ -323,7 +323,7 @@ def get_updates(matches):
 
 		gameResults = intermediateGameResults
 
-	for game in intermediateGameResults:
+	for game in gameResults:
 		intermediateGameStatuses[game.lobbyId] = game
 
 	updateInfo = UpdateInfo()
